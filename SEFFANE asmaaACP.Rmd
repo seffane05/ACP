@@ -1,0 +1,73 @@
+---
+title: "SEFFANE asmaa ACP"
+author: "SEFFANE Asmaa"
+date: "2023-03-04"
+output:
+  word_document: default
+  html_document: default
+---
+
+Dans ce mini projet, je vais analyser un aspect du jeu de données "protéines". l'axe choisit pour réaliser une ACP sera definit au long du projet.
+
+```{r cars}
+library(reader)
+proteine=read.table(file="proteines.dat", dec=",", col.names=c("country", "viandr","viandb ", "oeuf", "lait", "poisson", "cereals", "feculent", "oleagine", "fruitleg"))
+
+x = proteine[,-1] 
+rownames(x) = proteine$country
+
+
+n=nrow(x)
+nvar=ncol(x)
+
+```
+
+
+```{r}
+library(FactoMineR)
+res.pca <- PCA(x, ncp = 9)
+```
+
+
+
+
+
+```{r}
+res.pca$eig
+```
+
+On a neuf valeurs propres, on remarque que on peut prendre le quatres premiers valeurs propre et on atteint les 85%, ou pour olus que 90% il suffit de prendre les cinq premier valeurs propres,on aura une quantité d'information importante.
+par suite on dessine plot de toutes les valeurs propres et leur pourcentage de variance.
+
+```{r , echo=FALSE}
+barplot(res.pca$eig[,1],main="Tracé des valeurs propres",names.arg=1:length(res.pca$eig[,1]),ylab=expression(lambda[j]),xlab='j')
+barplot(res.pca$eig[,2],main="Part de variance expliquée par chaque axe",names.arg=1:length(res.pca$eig[,1]),ylab=expression(100*lambda[j]/I),xlab='j')
+
+```
+ on a deja vu au cour la projecction sur le plan 1 des deux axess 1 et 2, donc je propose de prendre comme plan de projection plan avec les deux axes 1 et 3 avec un pourcentage de variance accumulé de 57%
+ 
+
+
+
+
+```{r pressure, echo=FALSE}
+plot(res.pca, axes = c(1,3), choix = "ind")
+plot(res.pca, axes = c(1,3), choix = "var")
+```
+
+Annalyse:
+On remarque que par rapport au axe 3, il y a une consomation de proteine vegetal plus que celle d'animale.
+La distance entre les variables et l’origine mesure la qualité de représentation des variables. Les variables qui sont loin de l’origine sont bien représentées par l’ACP, donc on a les viandes blanches, cerelas, lait et oléagine sont bien présenté par l'ACP
+je remarque aussi qu'il y a une grande consommation de viande blanche et oeuf pour germany et neitherland et Liechtenstein, et nos données confirme ceci. iceland, norway et sweden ont une consomation extreme du lait, viande rouge et poisson et les données confirme ceci aussi.
+pour plus de detail on va utilisé la fonction suivante:
+
+
+```{r}
+dimdesc(res.pca)
+```
+on part direcetement à l'axe 3, les proteine qui ont un effet important sont viande blache, fruit legume et lait, alors que par rapport à la consommation les deux premier sont plus cosommé car leur correlation et positive alors que pour lait il est moins consommé avec correlation negative.
+
+meme si l'axe 3 a pour 12,53 mais il nous presente des informations importante concernant la consommation des proteines qui sont different qu'on retient du plan (axe 1, axe 2).
+
+
+
